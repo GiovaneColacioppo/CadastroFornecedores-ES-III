@@ -1,0 +1,23 @@
+.tela {
+    display: none;
+}
+
+.tela.ativo {
+    display: block;
+    animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.required::after {
+    content: " *";
+    color: #dc3545;
+    font-weight: bold;
+}
+
+#tabela-resultados tr {
+    cursor: pointer;
+}

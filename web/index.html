@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDU01 – Manter Cadastro de Fornecedores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light d-flex flex-column min-vh-100">
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">
+                <i class="bi bi-truck me-2"></i>Cadastro de Fornecedores
+            </span>
+        </div>
+    </nav>
+
+    <main class="container flex-grow-1">
+        <!-- Mensagem global (sucesso P8.1/A4.5/A5.5 ou aviso E3) -->
+        <div id="alerta-global" class="alert d-none" role="alert"></div>
+
+        <!-- TELA 11.1: BUSCA -->
+        <section id="tela-busca" class="tela ativo card shadow-sm mb-4">
+            <div class="card-header bg-white pb-0 border-bottom-0 pt-3">
+                <h4 class="text-primary"><i class="bi bi-search me-2"></i>Busca de Fornecedores</h4>
+                <hr>
+            </div>
+            <div class="card-body">
+                <form id="form-busca" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label for="b-codigo" class="form-label">Código:</label>
+                            <input type="text" class="form-control" id="b-codigo" maxlength="10">
+                        </div>
+                        <div class="col-md-5">
+                            <label for="b-razao-social" class="form-label">Razão Social:</label>
+                            <input type="text" class="form-control" id="b-razao-social" maxlength="100">
+                        </div>
+                        <div class="col-md-5">
+                            <label for="b-nome-fantasia" class="form-label">Nome Fantasia:</label>
+                            <input type="text" class="form-control" id="b-nome-fantasia" maxlength="60">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="b-cnpj" class="form-label">CNPJ:</label>
+                            <input type="text" class="form-control" id="b-cnpj" maxlength="18" placeholder="00.000.000/0000-00">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="b-cidade" class="form-label">Cidade:</label>
+                            <input type="text" class="form-control" id="b-cidade" maxlength="60">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="b-estado" class="form-label">Estado:</label>
+                            <select id="b-estado" class="form-select">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="b-status" class="form-label required">Status:</label>
+                            <select id="b-status" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="ATIVO">Ativo</option>
+                                <option value="INATIVO">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" id="btn-buscar" class="btn btn-primary px-4">
+                            <i class="bi bi-search me-2"></i>Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TELA 11.2: RESULTADO DA BUSCA -->
+        <section id="tela-resultado" class="tela card shadow-sm mb-4">
+            <div class="card-header bg-white pb-0 border-bottom-0 pt-3">
+                <h4 class="text-primary"><i class="bi bi-list-check me-2"></i>Resultado da Busca</h4>
+                <hr>
+            </div>
+            <div class="card-body pt-0">
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <button type="button" id="btn-novo" class="btn btn-success" disabled>
+                        <i class="bi bi-plus-lg me-1"></i>Novo
+                    </button>
+                    <button type="button" id="btn-visualizar" class="btn btn-info text-white" disabled>
+                        <i class="bi bi-eye me-1"></i>Visualizar
+                    </button>
+                    <button type="button" id="btn-alterar" class="btn btn-warning text-dark" disabled>
+                        <i class="bi bi-pencil me-1"></i>Alterar
+                    </button>
+                    <button type="button" id="btn-inativar" class="btn btn-danger" disabled>
+                        <i class="bi bi-x-circle me-1"></i>Inativar
+                    </button>
+                    <button type="button" id="btn-ativar" class="btn btn-secondary" disabled>
+                        <i class="bi bi-check-circle me-1"></i>Ativar
+                    </button>
+                </div>
+
+                <div id="mensagem-vazia" class="alert alert-warning d-none mb-3">
+                    Nenhum fornecedor encontrado para os parâmetros informados.
+                </div>
+
+                <div class="table-responsive border rounded">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" class="text-center" style="width: 50px;">Sel.</th>
+                                <th scope="col">Código</th>
+                                <th scope="col">Razão Social</th>
+                                <th scope="col">Nome Fantasia</th>
+                                <th scope="col">CNPJ</th>
+                                <th scope="col">Cidade/UF</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-resultados"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TELA 11.3: CADASTRO / ALTERAÇÃO / VISUALIZAÇÃO DE FORNECEDOR -->
+        <section id="tela-cadastro" class="tela card shadow-sm mb-4">
+            <div class="card-header bg-white pb-0 border-bottom-0 pt-3">
+                <h4 id="titulo-cadastro" class="text-primary">
+                    <i class="bi bi-building me-2"></i>Cadastro de Fornecedor
+                </h4>
+                <hr>
+            </div>
+            <div class="card-body">
+                <div id="alerta-cadastro" class="alert alert-danger d-none" role="alert"></div>
+
+                <form id="form-cadastro" novalidate>
+                    <!-- Dados do Fornecedor -->
+                    <h5 class="mb-3 text-secondary">Dados do Fornecedor</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-2">
+                            <label for="c-codigo" class="form-label">Código:</label>
+                            <input type="text" class="form-control bg-light" id="c-codigo" maxlength="10" readonly placeholder="(gerado)">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="c-cnpj" class="form-label required">CNPJ:</label>
+                            <input type="text" class="form-control" id="c-cnpj" maxlength="18" placeholder="00.000.000/0000-00">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="c-razao-social" class="form-label required">Razão Social:</label>
+                            <input type="text" class="form-control" id="c-razao-social" maxlength="100">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="c-nome-fantasia" class="form-label required">Nome Fantasia:</label>
+                            <input type="text" class="form-control" id="c-nome-fantasia" maxlength="60">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="c-email" class="form-label required">E-mail:</label>
+                            <input type="email" class="form-control" id="c-email" maxlength="100">
+                        </div>
+                        <!-- Exibido somente na Visualização (A1.1) -->
+                        <div class="col-md-2 d-none" id="grupo-status-visualizacao">
+                            <label for="c-status" class="form-label">Status:</label>
+                            <input type="text" class="form-control bg-light" id="c-status" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Telefone -->
+                    <h5 class="mb-3 text-secondary">Telefone</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <label for="c-tel-tipo" class="form-label required">Tipo:</label>
+                            <select id="c-tel-tipo" class="form-select">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="c-tel-ddd" class="form-label required">DDD:</label>
+                            <input type="text" class="form-control" id="c-tel-ddd" maxlength="2" inputmode="numeric">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="c-tel-numero" class="form-label required">Número:</label>
+                            <input type="text" class="form-control" id="c-tel-numero" maxlength="9" inputmode="numeric">
+                        </div>
+                    </div>
+
+                    <!-- Endereço -->
+                    <h5 class="mb-3 text-secondary">Endereço</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <label for="c-end-tipo" class="form-label required">Tipo Logradouro:</label>
+                            <select id="c-end-tipo" class="form-select">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="c-end-logradouro" class="form-label required">Logradouro:</label>
+                            <input type="text" class="form-control" id="c-end-logradouro" maxlength="100">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="c-end-numero" class="form-label required">Número:</label>
+                            <input type="text" class="form-control" id="c-end-numero" maxlength="10">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="c-end-complemento" class="form-label">Complemento:</label>
+                            <input type="text" class="form-control" id="c-end-complemento" maxlength="60">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="c-end-bairro" class="form-label required">Bairro:</label>
+                            <input type="text" class="form-control" id="c-end-bairro" maxlength="60">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="c-end-cep" class="form-label required">CEP:</label>
+                            <input type="text" class="form-control" id="c-end-cep" maxlength="8" inputmode="numeric" placeholder="Somente 8 dígitos">
+                        </div>
+                        <div class="col-md-5">
+                            <label for="c-end-cidade" class="form-label required">Cidade:</label>
+                            <input type="text" class="form-control" id="c-end-cidade" maxlength="60">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="c-end-estado" class="form-label required">Estado:</label>
+                            <select id="c-end-estado" class="form-select">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="c-end-pais" class="form-label required">País:</label>
+                            <select id="c-end-pais" class="form-select">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top">
+                        <button type="submit" id="btn-salvar" class="btn btn-primary px-4">
+                            <i class="bi bi-save me-2"></i>Salvar
+                        </button>
+                        <button type="button" id="btn-cancelar-cadastro" class="btn btn-outline-secondary px-4 ms-2 btn-cancelar">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TELA 11.4: INATIVAÇÃO / ATIVAÇÃO -->
+        <section id="tela-status" class="tela card shadow-sm mb-4">
+            <div class="card-header bg-white pb-0 border-bottom-0 pt-3">
+                <h4 id="titulo-status" class="text-primary">
+                    <i class="bi bi-arrow-left-right me-2"></i>Alterar Status
+                </h4>
+                <hr>
+            </div>
+            <div class="card-body">
+                <div id="alerta-status" class="alert alert-danger d-none" role="alert"></div>
+
+                <p class="fw-bold mb-3" id="info-fornecedor-status"></p>
+
+                <form id="form-status" novalidate>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-5">
+                            <label for="s-categoria" class="form-label required">Categoria:</label>
+                            <select id="s-categoria" class="form-select">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="s-justificativa" class="form-label required">Justificativa:</label>
+                            <textarea id="s-justificativa" class="form-control" rows="4" maxlength="255"></textarea>
+                            <div class="form-text">Máximo de 255 caracteres.</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-top">
+                        <button type="submit" id="btn-confirmar-status" class="btn btn-primary px-4">
+                            <i class="bi bi-check-lg me-2"></i>Confirmar
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary px-4 ms-2 btn-cancelar">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rodapé P3: Identificação do Usuário Autenticado em todas as telas -->
+    <footer class="container mb-4">
+        <div class="card border-secondary-subtle shadow-sm">
+            <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">
+                <div>
+                    <small class="text-muted d-block">Usuário</small>
+                    <strong id="usuario-autenticado">Carlos Mendes / Administrador</strong>
+                </div>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                    Perfil: Administrador
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
