@@ -1,0 +1,21 @@
+public class Telefone extends EntidadeDominio {
+    private TipoTelefone tipo;
+    private String ddd;
+    private String numero;
+
+    public Telefone() {}
+
+    public Telefone(Long id, TipoTelefone tipo, String ddd, String numero) {
+        super(id);
+        this.tipo = tipo;
+        this.ddd = ddd;
+        this.numero = numero;
+    }
+
+    public TipoTelefone getTipo() { return tipo; }
+    public void setTipo(TipoTelefone tipo) { this.tipo = tipo; }
+    public String getDdd() { return ddd; }
+    public void setDdd(String ddd) { this.ddd = ddd; }
+    public String getNumero() { return numero; }
+    public void setNumero(String numero) { this.numero = numero; }
+}
