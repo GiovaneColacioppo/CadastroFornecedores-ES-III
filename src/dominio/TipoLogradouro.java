@@ -1,3 +1,5 @@
+package dominio;
+
 public class TipoLogradouro extends EntidadeDominio {
     private String descricao;
 

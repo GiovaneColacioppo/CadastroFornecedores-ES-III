@@ -1,3 +1,5 @@
+package dominio;
+
 import java.time.LocalDateTime;
 
 public class HistoricoStatusFornecedor extends EntidadeDominio {

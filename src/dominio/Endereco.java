@@ -1,3 +1,5 @@
+package dominio;
+
 public class Endereco extends EntidadeDominio {
     private TipoLogradouro tipoLogradouro;
     private String logradouro;

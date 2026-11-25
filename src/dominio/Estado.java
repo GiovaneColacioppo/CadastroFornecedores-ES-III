@@ -1,3 +1,5 @@
+package dominio;
+
 public class Estado extends EntidadeDominio {
     private String nome;
     private String uf;

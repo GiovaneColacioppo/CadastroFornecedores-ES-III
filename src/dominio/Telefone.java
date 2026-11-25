@@ -1,3 +1,5 @@
+package dominio;
+
 public class Telefone extends EntidadeDominio {
     private TipoTelefone tipo;
     private String ddd;

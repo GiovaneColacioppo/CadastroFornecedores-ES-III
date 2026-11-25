@@ -1,3 +1,5 @@
+package dominio;
+
 public class Pais extends EntidadeDominio {
     private String nome;
     private String sigla;

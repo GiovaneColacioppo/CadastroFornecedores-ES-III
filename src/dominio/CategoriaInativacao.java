@@ -1,3 +1,5 @@
+package dominio;
+
 public class CategoriaInativacao extends EntidadeDominio {
     private String descricao;
 

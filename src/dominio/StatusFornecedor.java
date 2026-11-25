@@ -1,3 +1,5 @@
+package dominio;
+
 public enum StatusFornecedor {
     ATIVO("Ativo"),
     INATIVO("Inativo");
